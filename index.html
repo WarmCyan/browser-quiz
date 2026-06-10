@@ -1,0 +1,215 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script type="text/javascript">
+
+        // ----------------------
+        const version = "v0.1.0";
+        // ----------------------
+
+        let lists = {};
+        let name_elements = [];
+        let txtarea_elements = [];
+
+
+        let quizList = [];
+        let quizIndex = 0;
+        let timer = 0;
+
+        let previous_timestamp = undefined;
+        let partial_ticks = 0;
+
+
+        function addNewList() {
+            console.log("NEW!");
+            let name = document.createElement("input");
+            let txt = document.createElement("textarea");
+            name.setAttribute("placeholder", "name");
+            txt.setAttribute("rows", 20);
+            txt.setAttribute("placeholder", "Enter a quiz item per line");
+
+            name_elements.push(name);
+            txtarea_elements.push(txt);
+
+            let container = document.getElementById("lists");
+            container.appendChild(name);
+            container.appendChild(txt);
+        }
+
+        function createListsEditorElements() {
+            name_elements = []
+            txtarea_elements = []
+
+            let container = document.getElementById("lists");
+            container.innerHTML = "";
+            
+            for (let index in Object.keys(lists)) {
+                let key = Object.keys(lists)[index];
+                console.log(key);
+                console.log(lists[key]);
+                addNewList();
+                let name = name_elements[name_elements.length - 1];
+                let txt = txtarea_elements[txtarea_elements.length - 1];
+                name.value = key;
+                txt.value = lists[key].join("\n");
+            }
+        }
+
+        function captureListState() {
+            console.log("Capturing");
+            lists = {}
+            for (let i = 0; i < txtarea_elements.length; i++) {
+                let name = name_elements[i];
+                let txt = txtarea_elements[i];
+
+                lists[name.value] = txt.value.split("\n");
+            }
+            console.log(lists);
+        }
+
+        function download() {
+            let link = document.getElementById("downloadAnchorElem");
+            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(lists));
+            link.setAttribute("href", dataStr);
+            link.setAttribute("download", "list.json");
+            link.click();
+        }
+
+
+        async function loadListsFromFile() {
+            let listpicker = document.getElementById("listpicker");
+            let file = listpicker.files[0];
+            console.log(file);
+
+            /*let reader = new FileReader();
+            let contents = reader.readAsText(file);*/
+            let contents = await file.text();
+            console.log(contents);
+            lists = JSON.parse(contents);
+            console.log(lists);
+            createListsEditorElements();
+        }
+
+
+        function runQuiz() {
+            console.log("Quiz time!");
+            let items = [];
+            for (let key in lists) {
+                console.log(lists[key]);
+                items = items.concat(lists[key]);
+            }
+            console.log(items);
+            quizList = items;
+            quizIndex = -1;
+
+            quizBeginningTime();
+        }
+
+        function quizBeginningTime() {
+            let nameelem = document.getElementById("name");
+            nameelem.innerHTML = "Prepare yourself!"; 
+            countdownTimer(6.0);
+        }
+
+        function advanceQuiz() {
+            quizIndex += 1;
+            let nameelem = document.getElementById("name");
+            if (quizIndex == quizList.length) {
+                nameelem.innerHTML = "done!";
+                return;
+            }
+            
+            item = quizList[quizIndex];
+            nameelem.innerHTML = item;
+            countdownTimer(4.0);
+            
+        }
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame
+        function step(timestamp) {
+            if (previous_timestamp === undefined) {
+                previous_timestamp = timestamp;
+            }
+
+            let elapsed = timestamp - previous_timestamp;
+
+
+            let remaining = timer - elapsed / 1000.0;
+            
+            timerelem = document.getElementById("timer");
+            timerelem.innerHTML = remaining.toFixed(1);
+
+            if (remaining > 0.0) {
+                requestAnimationFrame(step);
+            }
+            else {
+                timerelem.innerHTML = "Done!";
+                console.log("Done!");
+                advanceQuiz();
+            }
+        }
+
+        function countdownTimer(seconds) {
+            previous_timestamp = undefined;
+            timer = seconds;
+            
+            requestAnimationFrame(step);
+        }
+
+
+        // initial page setup stuff
+        function onPageReady() {
+            console.log("??");
+            let savelistbtn = document.getElementById("savemylist");
+
+            
+            
+            savelistbtn.addEventListener("click", () => {
+                captureListState();
+                /*list_elem = document.getElementById("mylist");
+                console.log(list_elem);
+                console.log(list_elem.value);
+
+
+                let link = document.getElementById("downloadAnchorElem");
+                let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(list_elem.value));
+                link.setAttribute("href", dataStr);
+                link.setAttribute("download", "list.json");
+                link.click();*/
+            });
+
+            
+
+            
+            console.log("Ready!");
+        }
+
+        window.addEventListener("DOMContentLoaded", (event) => { onPageReady(); });
+
+        
+        </script>
+        <style>
+        </style>
+    </head>
+    <body>
+        <input type="file", id="listpicker" accept=".json" onchange="loadListsFromFile()" />
+        <button id="newlist" onclick="addNewList()">New</button>
+        <div id="lists">
+            <!-- <textarea id="mylist", rows="20"></textarea> -->
+        </div>
+        <button id="savemylist">Save</button>
+        <button id="downloadbtn" onclick="download()">Download</button>
+        <!-- https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser -->
+        <a id="downloadAnchorElem" style="display: none"></a>
+
+
+        <button id="runquiz" onclick="runQuiz()">Run</button>
+
+
+        <div id="timerscreen">
+            <h1 id="name">Thing</h1>
+            <h2 id="timer">Time</h2>
+        </div>
+        
+    </body>
+</html>
