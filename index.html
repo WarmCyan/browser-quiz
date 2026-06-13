@@ -10,6 +10,7 @@
         let lists = {};
         let name_elements = [];
         let txtarea_elements = [];
+        let rmbtn_elements = [];  // need this to find the correct index to remove the others
 
 
         let quizList = [];
@@ -65,28 +66,59 @@
 
             name.addEventListener("input", () => {
                 captureListState();
-            })
+            });
             txt.addEventListener("blur", () => {
                 captureListState();
-            })
+            });
             name_elements.push(name);
             txtarea_elements.push(txt);
 
             let rmbtn = document.createElement("button");
             rmbtn.innerHTML = "X";
             rmbtn.style["background-color"] = "red";
-            
+            rmbtn_elements.push(rmbtn);
+            rmbtn.addEventListener("click", (event) => {
+
+                // find this rm btn in the elements to find the index
+                // (this is necessary because just tracking an index
+                // would change after more than one prior delete)
+                console.log("Trying to delete")
+                console.log(rmbtn_elements);
+                for (let i = 0; i < rmbtn_elements.length; i++) {
+                    //if (rmbtn_elements[i] == event.currentTarget) {
+                    if (rmbtn_elements[i] == rmbtn) {
+                        removeList(i);
+                        return;
+                    }
+                }
+            });
+
+            let delrow = document.createElement("div");
+            delrow.style.display = "flex";
+            let spacer = document.createElement("div")
+            spacer.style["flex-grow"] = 1;
+            delrow.appendChild(spacer);
+            delrow.appendChild(rmbtn);
 
             let container = document.getElementById("lists");
             thislistcontainer.appendChild(name);
             thislistcontainer.appendChild(txt);
-            //thislistcontainer.appendChild(rmbtn);
+            thislistcontainer.appendChild(delrow);
             container.appendChild(thislistcontainer);
             updateCheckLists();
         }
 
-        function removeList(name) {
+        function removeList(index) {
             // TODO: get this sorted
+            console.log(index);
+            console.log(name_elements);
+            let name = name_elements[index].value
+            delete lists[name];
+            name_elements.splice(index, 1);
+            txtarea_elements.splice(index, 1);
+            rmbtn_elements.splice(index, 1);
+
+            createListsEditorElements();
         }
 
         function createListsEditorElements() {

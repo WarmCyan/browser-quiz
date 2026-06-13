@@ -25,6 +25,6 @@ DONE: when * included in line, don't have execution timer, display button for us
 
 TODO: about content
 
-STRT: render on github pages
+DONE: render on github pages
 
-STRT: remove list
+DONE: remove list
