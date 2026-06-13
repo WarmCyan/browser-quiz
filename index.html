@@ -145,8 +145,8 @@
 
 
         async function loadListsFromFile() {
-            let listpicker = document.getElementById("listpicker");
-            let file = listpicker.files[0];
+            let filepicker = document.getElementById("filepicker");
+            let file = filepicker.files[0];
             console.log(file);
 
             let contents = await file.text();
@@ -159,6 +159,7 @@
         function endQuiz() {
             let nameelem = document.getElementById("name");
             nameelem.innerHTML = "Whew! All done!";
+            setQuizBackgroundColor("#112233");
         }
 
 
@@ -199,6 +200,7 @@
             let nameelem = document.getElementById("name");
             nameelem.innerHTML = "Prepare yourself!"; 
             currentTimerState = "beginning";
+            setQuizBackgroundColor("#112233");
             countdownTimer(1.0);
         }
 
@@ -211,7 +213,13 @@
             let affirmation = affirmationsList[getRandomInt(affirmationsList.length)];
             nameelem.innerHTML = affirmation + " Get ready..."; 
             currentTimerState = "reset";
+            setQuizBackgroundColor("#112233");
             countdownTimer(resetTime);
+        }
+
+        function setQuizBackgroundColor(color) {
+            let elem = document.getElementById("activeQuizPage");
+            elem.style["background-color"] = color;
         }
 
         function advanceQuiz() {
@@ -221,6 +229,7 @@
             item = quizList[quizIndex];
             nameelem.innerHTML = item;
             currentTimerState = "execute";
+            setQuizBackgroundColor("#332211");
             countdownTimer(executeTime);
         }
 
@@ -316,6 +325,79 @@
         
         </script>
         <style>
+            body {
+                margin: 0px;
+                padding: 0px;
+                background-color: black;
+                color: #fed926;
+                font-family: sans-serif;
+            }
+
+            #activeQuizPage {
+                position: fixed;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                /* color: red;
+                background-color: green; */
+                background-color: black;
+            }
+
+            #exitQuizBtn {
+                position: fixed;
+                right: 0;
+                top: 0;
+            }
+            
+            #quizCentered span {
+                text-align: center;
+            }
+            
+            #quizCentered span h1 {
+                font-size: 40pt;
+            }
+            #quizCentered span h2 {
+                font-size: 30pt;
+            }
+            
+            #quizCentered {
+                /*text-align: center;
+                position: fixed;
+                left: 0;
+                right: 0;*/
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+            }
+
+            #tablist {
+                display: flex;
+            }
+            #tablist button, .filepicker-btn {
+                background-color: #fed926;
+                padding: 10px;
+                padding-left: 15px;
+                padding-right: 15px;
+                border: none;
+                display: inline-block;
+                color: black;
+                font-size: 10pt;
+            }
+            input[type="file"] {
+                display: none;
+            }
+
+            .tab-spacer {
+                background-color: #fed926;
+                flex-grow: 1;
+            }
+
+            .active-tab {
+                font-weight: bold;
+                background-color: #ba8310 !important;
+            }
         </style>
     </head>
     <body>
@@ -323,10 +405,15 @@
 
         <div id="tablist">
 
-            <button onclick="changeTab('mainPage')" class="tabbtn">Main</button>
-            <button onclick="changeTab('editListsPage')" class="tabbtn">Edit Lists</button>
+            <button onclick="changeTab('mainPage')" class="tabbtn">Quiz</button>
+            <button onclick="changeTab('editListsPage')" class="tabbtn">Edit</button>
             <button onclick="changeTab('aboutPage')" class="tabbtn">About</button>
-            <input type="file", id="listpicker" accept=".json" onchange="loadListsFromFile()" />
+
+            <span class="tab-spacer"></span>
+            
+            <!-- https://stackoverflow.com/questions/572768/styling-an-input-type-file-button -->
+            <label for="filepicker" class="filepicker-btn">Upload</label>
+            <input type="file", id="filepicker" accept=".json" onchange="loadListsFromFile()" />
             <button id="downloadbtn" onclick="download()">Download</button>
             <!-- https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser -->
             <a id="downloadAnchorElem" style="display: none"></a>
@@ -334,8 +421,13 @@
 
 
         <div id="activeQuizPage" class="tab" style="display: none">
-            <h1 id="name"></h1>
-            <h2 id="timer"></h2>
+            <button id="exitQuizBtn" onclick="changeTab('mainPage'); endQuiz();">X</button>
+            <div id="quizCentered">
+                <span>
+                <h1 id="name"></h1>
+                <h2 id="timer"></h2>
+                </span>
+            </div>
         </div>
 
         <div id="mainPage" class="tab">

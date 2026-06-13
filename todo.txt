@@ -17,4 +17,4 @@ DONE: shuffle item list order
 
 TODO: time edit boxes
 
-TODO: nice CSS!
+STRT: nice CSS!
