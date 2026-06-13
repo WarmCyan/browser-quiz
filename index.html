@@ -53,6 +53,9 @@
 
         function addNewList() {
             console.log("NEW!");
+            let thislistcontainer = document.createElement("div"); 
+            thislistcontainer.className = "list";
+            
             let name = document.createElement("input");
             let txt = document.createElement("textarea");
             name.setAttribute("placeholder", "name");
@@ -63,7 +66,7 @@
             name.addEventListener("input", () => {
                 captureListState();
             })
-            txt.addEventListener("input", () => {
+            txt.addEventListener("blur", () => {
                 captureListState();
             })
             
@@ -72,8 +75,9 @@
             txtarea_elements.push(txt);
 
             let container = document.getElementById("lists");
-            container.appendChild(name);
-            container.appendChild(txt);
+            thislistcontainer.appendChild(name);
+            thislistcontainer.appendChild(txt);
+            container.appendChild(thislistcontainer);
             updateCheckLists();
         }
 
@@ -210,8 +214,10 @@
 
         function quizInBetweenReadinessTime() {
             let nameelem = document.getElementById("name");
+            let flavortextelem = document.getElementById("flavortext");
             let affirmation = affirmationsList[getRandomInt(affirmationsList.length)];
-            nameelem.innerHTML = affirmation + " Get ready..."; 
+            nameelem.innerHTML = "";
+            flavortextelem.innerHTML = affirmation + " Get ready..."; 
             currentTimerState = "reset";
             setQuizBackgroundColor("#112233");
             countdownTimer(resetTime);
@@ -225,9 +231,11 @@
         function advanceQuiz() {
             quizIndex += 1;
             let nameelem = document.getElementById("name");
+            let flavortextelem = document.getElementById("flavortext");
             
             item = quizList[quizIndex];
             nameelem.innerHTML = item;
+            flavortextelem.innerHTML = "";
             currentTimerState = "execute";
             setQuizBackgroundColor("#332211");
             countdownTimer(executeTime);
@@ -287,23 +295,10 @@
         // initial page setup stuff
         function onPageReady() {
             console.log("??");
-            let savelistbtn = document.getElementById("savemylist");
-
-            
-            
+            /*let savelistbtn = document.getElementById("savemylist");
             savelistbtn.addEventListener("click", () => {
                 captureListState();
-                /*list_elem = document.getElementById("mylist");
-                console.log(list_elem);
-                console.log(list_elem.value);
-
-
-                let link = document.getElementById("downloadAnchorElem");
-                let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(list_elem.value));
-                link.setAttribute("href", dataStr);
-                link.setAttribute("download", "list.json");
-                link.click();*/
-            });
+            });*/
 
             
 
@@ -316,10 +311,19 @@
 
         function changeTab(tabid) {
             let tablist = document.getElementsByClassName("tab");
+            let tablistbtns = document.getElementsByClassName("tabbtn");
+            let targetId = 0;
             for (i = 0; i < tablist.length; i++) {
                 tablist[i].style.display = "none";
+                if (i < tablistbtns.length) {
+                    tablistbtns[i].className = tablistbtns[i].className.replace(" active-tab", "");
+                    if (tablist[i].id == tabid) {
+                        targetId = i;
+                    }
+                }
             }
             document.getElementById(tabid).style.display = "block";
+            tablistbtns[targetId].className += " active-tab";
         }
 
         
@@ -360,6 +364,9 @@
             #quizCentered span h2 {
                 font-size: 30pt;
             }
+            #quizCentered span h3 {
+                font-size: 25pt;
+            }
             
             #quizCentered {
                 /*text-align: center;
@@ -375,7 +382,7 @@
             #tablist {
                 display: flex;
             }
-            #tablist button, .filepicker-btn {
+            #tablist button, .filepicker-btn, #exitQuizBtn, button {
                 background-color: #fed926;
                 padding: 10px;
                 padding-left: 15px;
@@ -398,6 +405,29 @@
                 font-weight: bold;
                 background-color: #ba8310 !important;
             }
+
+            #tabs {
+                padding: 20px;
+            }
+
+
+            #lists {
+            }
+            
+            .list {
+                width: 190px;
+                
+                margin-right: 5px;
+                margin-bottom: 5px;
+            }
+
+            .list input, .list textarea {
+                width: 190px;
+                background-color: #111111;
+                color: #fed926;
+                padding: 3px;
+                border: 1px solid #fed926;
+            };
         </style>
     </head>
     <body>
@@ -405,50 +435,55 @@
 
         <div id="tablist">
 
-            <button onclick="changeTab('mainPage')" class="tabbtn">Quiz</button>
+            <button onclick="changeTab('mainPage')" class="tabbtn active-tab">Quiz</button>
             <button onclick="changeTab('editListsPage')" class="tabbtn">Edit</button>
             <button onclick="changeTab('aboutPage')" class="tabbtn">About</button>
 
             <span class="tab-spacer"></span>
-            
+
             <!-- https://stackoverflow.com/questions/572768/styling-an-input-type-file-button -->
-            <label for="filepicker" class="filepicker-btn">Upload</label>
+            <label for="filepicker" class="filepicker-btn">^</label>
             <input type="file", id="filepicker" accept=".json" onchange="loadListsFromFile()" />
-            <button id="downloadbtn" onclick="download()">Download</button>
+            <button id="downloadbtn" onclick="download()">v</button>
             <!-- https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser -->
             <a id="downloadAnchorElem" style="display: none"></a>
         </div>
 
+        <div id="tabs">
 
-        <div id="activeQuizPage" class="tab" style="display: none">
-            <button id="exitQuizBtn" onclick="changeTab('mainPage'); endQuiz();">X</button>
-            <div id="quizCentered">
-                <span>
-                <h1 id="name"></h1>
-                <h2 id="timer"></h2>
-                </span>
+            <div id="mainPage" class="tab">
+
+                <div id="checkLists">
+                    <p>No lists loaded, either make some lists in "Edit", or upload a previously saved set of lists.
+                </div>
+                
+                <button id="runquiz" onclick="runQuiz()">Run</button>
             </div>
-        </div>
 
-        <div id="mainPage" class="tab">
 
-            <div id="checkLists">
+            <div id="editListsPage" class="tab" style="display: none">
+                <div id="lists">
+                    <!-- <textarea id="mylist", rows="20"></textarea> -->
+                </div>
+                <!-- <button id="savemylist">Save</button> -->
+                <button id="newlist" onclick="addNewList()">New</button>
             </div>
             
-            <button id="runquiz" onclick="runQuiz()">Run</button>
-        </div>
-
-
-        <div id="editListsPage" class="tab" style="display: none">
-            <button id="newlist" onclick="addNewList()">New</button>
-            <div id="lists">
-                <!-- <textarea id="mylist", rows="20"></textarea> -->
+            <div id="aboutPage" class="tab" style="display: none">
+                hi!
             </div>
-            <button id="savemylist">Save</button>
-        </div>
-        
-        <div id="aboutPage" class="tab" style="display: none">
-            hi!
+            
+            <div id="activeQuizPage" class="tab" style="display: none">
+                <button id="exitQuizBtn" onclick="changeTab('mainPage'); endQuiz();">X</button>
+                <div id="quizCentered">
+                    <span>
+                    <h1 id="name"></h1>
+                    <h3 id="flavortext"></h3>
+                    <h2 id="timer"></h2>
+                    </span>
+                </div>
+            </div>
+
         </div>
         
     </body>
