@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+# [1.0.1] - 2026-06-13
+
+### Fixed
+
+* Forgot to replace the initial "get ready" time that I'd set to one second
+because I was tired of waiting 10 seconds every time I wanted to test something.
+
+
+
+
 # [1.0.0] - 2026-06-13
 
 First release!

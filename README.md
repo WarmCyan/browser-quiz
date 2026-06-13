@@ -19,7 +19,7 @@ Everything is in a single file, the `index.html`. To use, you have these options
 available to you:
 * Use the ""live"" version at
 [https://warmcyan.github.io/browser-quiz/](https://warmcyan.github.io/browser-quiz/). Data is kept local in your browser, so you could, for instance, enter your mother's maiden name, first pet's name, and the name of the street you grew up on into one of your quiz lists, and I still wouldn't have access to it. However, it's possible you've misunderstood the point of this tool if you do that, and as a general rule I really wouldn't recommend entering those anywhere online anyway.
-* Download [the webpage itself](https://github.com/WarmCyan/browser-quiz/releases/download/v1.0.0/index.html) and open this local copy in your browser (on android this doesn't work in firefox, but chrome/vivaldi are fine, no idea how this works on apple).
+* Download [the webpage itself](https://github.com/WarmCyan/browser-quiz/releases/download/v1.0.1/index.html) and open this local copy in your browser (on android this doesn't work in firefox, but chrome/vivaldi are fine, no idea how this works on apple).
 * Open either of the above and RE-download it by clicking on the "download"
 button in the "About" tab, because that definitely makes sense to do. 
 
