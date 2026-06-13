@@ -264,7 +264,21 @@
             flavortextelem.innerHTML = "";
             currentTimerState = "execute";
             setQuizBackgroundColor("#332211");
-            countdownTimer(executeTime);
+
+            
+            if (item[item.length-1] === "*") {
+            document.getElementById("timer").style.display = "none";
+                document.getElementById("nextbtn").style.display = "block";
+            }
+            else {
+                countdownTimer(executeTime);
+            }
+        }
+
+        function nextBtnClicked() {
+            document.getElementById("nextbtn").style.display = "none";
+            document.getElementById("timer").style.display = "block";
+            quizInBetweenReadinessTime();
         }
 
         // https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame
@@ -494,6 +508,12 @@
                 vertical-align: top;
             }
 
+            #nextbtn {
+                display: none;
+                font-size: 20pt;
+                padding: 30px;
+            }
+
         </style>
     </head>
     <body>
@@ -534,6 +554,7 @@
                 </div>
                 <!-- <button id="savemylist">Save</button> -->
                 <button id="newlist" onclick="addNewList()">+</button>
+                <p>(end a line with '*' to make it non-timed)</p>
             </div>
             
             <div id="aboutPage" class="tab" style="display: none">
@@ -544,9 +565,10 @@
                 <button id="exitQuizBtn" onclick="changeTab('mainPage'); endQuiz();">X</button>
                 <div id="quizCentered">
                     <span>
-                    <h1 id="name"></h1>
-                    <h3 id="flavortext"></h3>
-                    <h2 id="timer"></h2>
+                        <h1 id="name"></h1>
+                        <h3 id="flavortext"></h3>
+                        <h2 id="timer"></h2>
+                        <button id="nextbtn" onclick="nextBtnClicked();">Completed</button>
                     </span>
                 </div>
             </div>

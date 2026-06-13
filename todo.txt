@@ -17,10 +17,10 @@ DONE: shuffle item list order
 
 TODO: time edit boxes
 
-STRT: nice CSS!
+DONE: nice CSS!
 
 
-TODO: when * included in line, don't have execution timer, display button for user to manually advance
+DONE: when * included in line, don't have execution timer, display button for user to manually advance
 (alternatively just ahavbe 
 
 TODO: about content
