@@ -69,16 +69,24 @@
             txt.addEventListener("blur", () => {
                 captureListState();
             })
-            
-
             name_elements.push(name);
             txtarea_elements.push(txt);
+
+            let rmbtn = document.createElement("button");
+            rmbtn.innerHTML = "X";
+            rmbtn.style["background-color"] = "red";
+            
 
             let container = document.getElementById("lists");
             thislistcontainer.appendChild(name);
             thislistcontainer.appendChild(txt);
+            //thislistcontainer.appendChild(rmbtn);
             container.appendChild(thislistcontainer);
             updateCheckLists();
+        }
+
+        function removeList(name) {
+            // TODO: get this sorted
         }
 
         function createListsEditorElements() {
