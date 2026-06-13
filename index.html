@@ -119,6 +119,7 @@
             rmbtn_elements.splice(index, 1);
 
             createListsEditorElements();
+            updateCheckLists();
         }
 
         function createListsEditorElements() {
@@ -212,6 +213,26 @@
             link.setAttribute("href", dataStr);
             link.setAttribute("download", "list.json");
             link.click();
+        }
+
+        function downloadThisWebpage() {
+            let link = document.getElementById("downloadAnchorElem");
+            let dataStr = "data:text/html;charset=utf-8," + encodeURIComponent(document.documentElement.innerHTML);
+            link.setAttribute("href", dataStr);
+            link.setAttribute("download", "browser-quiz.html");
+            link.click();
+        }
+
+        function clearPageState() {
+            // this is actually necessary because downloadThisWebpage() will include the html from added lists etc.
+            // that aren't actually included in the JS state...interesting
+            document.getElementById("lists").innerHTML = "";
+            document.getElementById("checkLists").innerHTML = "<p>No lists loaded, either make some lists in \"Edit\", or upload a previously saved set of lists.";
+            document.getElementById("executionTime").value = "6.0";
+            document.getElementById("executionTimeLabel").innerHTML = "(6.0)";
+            document.getElementById("resetTime").value = "4.0";
+            document.getElementById("resetTimeLabel").innerHTML = "(4.0)";
+            changeTab("mainPage");
         }
 
 
@@ -381,15 +402,8 @@
 
         // initial page setup stuff
         function onPageReady() {
-            console.log("??");
-            /*let savelistbtn = document.getElementById("savemylist");
-            savelistbtn.addEventListener("click", () => {
-                captureListState();
-            });*/
             document.getElementById("version").innerHTML = version;
-            
-
-            
+            clearPageState();
             console.log("Ready!");
             loadBrowserCache();
         }
@@ -612,6 +626,9 @@
             .slider-row label {
                 margin-top: 16px;
             }
+            a {
+                color: lightblue;
+            }
 
         </style>
     </head>
@@ -660,6 +677,7 @@
 
 
             <div id="editListsPage" class="tab" style="display: none">
+                <p>Click the "+" button at the bottom to add a new list. Every line of the large text areas is considered a separate item.</p>
                 <div id="lists">
                     <!-- <textarea id="mylist", rows="20"></textarea> -->
                 </div>
@@ -669,7 +687,40 @@
             </div>
             
             <div id="aboutPage" class="tab" style="display: none">
-                <p id="version">version.version.version</p>
+                <h2>Usage</h2>
+
+                <p>This site takes one or more lists of things/movements to practice, randomizes them, and generates a timed quiz.</p>
+
+                <h3>Lists</h3>
+
+                <p>To create or edit lists, go to the "Edit" tab. The yellow "+" button will add a new list. Each list consists of a single line name field, and a text area where you can enter the movements associated with that list. Each line in the text area is a separate item/will be brought up as an invidiual quiz question.</p>
+
+                <p>When you have created a few lists and you want to save the whole set/re-use them later, hit the "save" button in the upper right. This will download your lists as a JSON file. To reload them, click the "load" button, and select your JSON file.</p>
+
+                <p>If there are items in your list that might take a variable/long time to run, you can put a "*" at the end of the line. When these items come up in the quiz, rather than automatically moving on after some number of seconds, a button will appear for you to manually advance the quiz to the next item.</p>
+
+                <h3>Quizzes</h3>
+
+                <p>When you have some lists and you're ready to BUCKLE DOWN AND GET STUDYING, head over to the "Quiz" tab. For an individual quiz session, you can enable/disable which lists to include by checking/unchecking them.</p>
+
+                <p>There are two sliders/timer controls for the quiz session, "execution time" and "reset time". Execution time is the amount of time you have after the next item is shown to complete it. In between each item there's a brief grace period to "reset", controlled by the "reset time".</p>
+
+                <p>When you're ready to go, and have the timers set to your liking, hit the "Quiz me!" button!</p>
+
+                <p>Happy practicing!</p>
+
+                
+                <h2>Code stuff</h2>
+                
+                <p>This "app" is a single HTML file, you can save it and run it locally! (Use below download button or right click and "save page as").</p>
+                <button onclick="downloadThisWebpage();">Download</button>
+                <p>To view the code in version control, see <a href="https://github.com/WarmCyan/browser-quiz">https://github.com/WarmCyan/browser-quiz</a>.</p>
+                <div style="display: flex">
+                    <p><b>Version: </b></p>&nbsp;
+                    <p id="version">version.version.version</p>
+                </div>
+                <p>This code is released under the <a href="https://opensource.org/license/mit">MIT license</a>.</p>
+                <p>Copyright &copy; 2026 Nathan Martindale</p>
             </div>
             
             <div id="activeQuizPage" class="tab" style="display: none">

@@ -23,8 +23,9 @@ DONE: nice CSS!
 DONE: when * included in line, don't have execution timer, display button for user to manually advance
 (alternatively just ahavbe 
 
-TODO: about content
+DONE: about content
 
 DONE: render on github pages
-
 DONE: remove list
+
+TODO: CODE CLEANUP
