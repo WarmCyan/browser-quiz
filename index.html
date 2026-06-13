@@ -43,12 +43,22 @@
             txt.setAttribute("rows", 20);
             txt.setAttribute("placeholder", "Enter a quiz item per line");
 
+
+            name.addEventListener("input", () => {
+                captureListState();
+            })
+            txt.addEventListener("input", () => {
+                captureListState();
+            })
+            
+
             name_elements.push(name);
             txtarea_elements.push(txt);
 
             let container = document.getElementById("lists");
             container.appendChild(name);
             container.appendChild(txt);
+            updateCheckLists();
         }
 
         function createListsEditorElements() {
@@ -70,6 +80,32 @@
             }
         }
 
+
+        function updateCheckLists() {
+            let previouslyChecked = []; // TODO: 
+            let parentElem = document.getElementById("checkLists");
+            parentElem.innerHTML = "";
+            let i = 0;
+            for (let key in lists) {
+                let inputelem = document.createElement("input");
+                inputelem.type = "checkbox";
+                inputelem.name = "checkedlists";
+                inputelem.value = key;
+                inputelem.id = "list-" + i;
+                
+                let label = document.createElement("label");
+                label.setAttribute("for", inputelem.id);
+                label.innerHTML = key;
+                label.id = "list-" + i + "-label";
+                
+                parentElem.appendChild(inputelem);
+                parentElem.appendChild(label);
+                parentElem.appendChild(document.createElement("br"));
+
+                i++;
+            }
+        }
+
         function captureListState() {
             console.log("Capturing");
             lists = {}
@@ -80,6 +116,7 @@
                 lists[name.value] = txt.value.split("\n");
             }
             console.log(lists);
+            updateCheckLists();
         }
 
         function download() {
@@ -96,8 +133,6 @@
             let file = listpicker.files[0];
             console.log(file);
 
-            /*let reader = new FileReader();
-            let contents = reader.readAsText(file);*/
             let contents = await file.text();
             console.log(contents);
             lists = JSON.parse(contents);
@@ -113,8 +148,27 @@
 
         function runQuiz() {
             console.log("Quiz time!");
+
+
+            // get the set of checked lists
+            let selectedLists = [];
+            let checkboxes = document.getElementsByName("checkedlists");
+            console.log(checkboxes);
+            for (let i = 0; i < checkboxes.length; i++) {
+                console.log(i);
+                console.log(checkboxes[i]);
+                if (checkboxes[i].checked) {
+                    console.log("CHECKED!");
+                    console.log(checkboxes[i].value);
+                    selectedLists.push(checkboxes[i].value);
+                }
+            }
+            console.log("Found these lists selected: ");
+            console.log(selectedLists);
+            
             let items = [];
-            for (let key in lists) {
+            for (let i = 0; i < selectedLists.length; i++) {
+                let key = selectedLists[i];
                 console.log(lists[key]);
                 items = items.concat(lists[key]);
             }
@@ -140,7 +194,7 @@
         function quizInBetweenReadinessTime() {
             let nameelem = document.getElementById("name");
             let affirmation = affirmationsList[getRandomInt(affirmationsList.length)];
-            nameelem.innerHTML = affirmation + " Get ready for the next one..."; 
+            nameelem.innerHTML = affirmation + " Get ready..."; 
             currentTimerState = "reset";
             countdownTimer(resetTime);
         }
@@ -254,9 +308,9 @@
 
         <div id="tablist">
 
-            <button onclick="changeTab('mainPage')">Main</button>
-            <button onclick="changeTab('editListsPage')">Edit Lists</button>
-            <button onclick="changeTab('aboutPage')">About</button>
+            <button onclick="changeTab('mainPage')" class="tabbtn">Main</button>
+            <button onclick="changeTab('editListsPage')" class="tabbtn">Edit Lists</button>
+            <button onclick="changeTab('aboutPage')" class="tabbtn">About</button>
             <input type="file", id="listpicker" accept=".json" onchange="loadListsFromFile()" />
             <button id="downloadbtn" onclick="download()">Download</button>
             <!-- https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser -->
@@ -270,6 +324,10 @@
         </div>
 
         <div id="mainPage" class="tab">
+
+            <div id="checkLists">
+            </div>
+            
             <button id="runquiz" onclick="runQuiz()">Run</button>
         </div>
 
