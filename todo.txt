@@ -3,7 +3,7 @@ DONE: create list tab
 DONE: upload lists functionality
 DONE: download lists functionality
 DONE: run quiz
-STRT: quiz list selector
+DONE: quiz list selector
 
 
 
@@ -13,6 +13,8 @@ TODO: keep lists in browser storage
 
 TODO: keep current quiz position saved in browser storage as well
 
-TODO: shuffle item list order
+DONE: shuffle item list order
 
 TODO: time edit boxes
+
+TODO: nice CSS!
