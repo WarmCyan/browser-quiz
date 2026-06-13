@@ -107,19 +107,45 @@
             parentElem.innerHTML = "";
             let i = 0;
             for (let key in lists) {
-                let inputelem = document.createElement("input");
-                inputelem.type = "checkbox";
-                inputelem.name = "checkedlists";
-                inputelem.value = key;
-                inputelem.id = "list-" + i;
+
+                // TODO: copy over info in comment from ref
+                let checkContainer = document.createElement("label");
+                checkContainer.classList.add("custom-checkbox-container");
                 
-                let label = document.createElement("label");
-                label.setAttribute("for", inputelem.id);
+                let actualCheckbox = document.createElement("input");
+                actualCheckbox.type = "checkbox";
+                actualCheckbox.name = "checkedlists";
+                actualCheckbox.value = key;
+                actualCheckbox.id = "list-" + i;
+                
+                let checkboxDisplay = document.createElement("span");
+                checkboxDisplay.classList.add("checkbox");
+                checkboxDisplay.classList.add("row-item");
+                
+                checkContainer.appendChild(actualCheckbox);
+                checkContainer.appendChild(checkboxDisplay);
+                
+                let p = document.createElement("p")
+                p.style.flex = 1;
+                p.innerHTML = key;
+                p.classList.add("row-item");
+                p.classList.add("item-label");
+                checkContainer.appendChild(p);
+                
+                actualCheckbox.addEventListener("input", () => {
+                    p.classList.toggle("checked", actualCheckbox.checked);
+                });
+
+                
+
+                /*let label = document.createElement("label");
+                label.setAttribute("for", actualCheckbox.id);
                 label.innerHTML = key;
-                label.id = "list-" + i + "-label";
-                
-                parentElem.appendChild(inputelem);
-                parentElem.appendChild(label);
+                label.id = "list-" + i + "-label";*/
+
+                // parentElem.appendChild(actualCheckbox);
+                // parentElem.appendChild(label);
+                parentElem.appendChild(checkContainer);
                 parentElem.appendChild(document.createElement("br"));
 
                 i++;
@@ -395,6 +421,10 @@
             input[type="file"] {
                 display: none;
             }
+            .other-btn {
+                padding-left: 5px !important;
+                padding-right: 7px !important;
+            }
 
             .tab-spacer {
                 background-color: #fed926;
@@ -428,6 +458,42 @@
                 padding: 3px;
                 border: 1px solid #fed926;
             };
+            
+            .custom-checkbox-container {
+                display: flex;
+                flex: 1;
+            }
+
+            .custom-checkbox-container input {
+                display: none;
+            }
+            .custom-checkbox-container .checkbox {
+                height: 22px;
+                width: 22px;
+                margin: 16px;
+                margin-left: 2px;
+                border: 1px solid grey;
+                display: inline-block;
+                position: relative;
+            }
+
+            .custom-checkbox-container [type=checkbox]:checked + .checkbox:before {
+                content : '\2714';
+                font-size: 28px;
+                position: absolute;
+                top: -10px;
+                left: 0;
+            }
+
+            .item-label {
+                /* font-family: arial; */
+                font-weight: bold;
+            }
+            .row-item {
+                display: inline-block;
+                vertical-align: top;
+            }
+
         </style>
     </head>
     <body>
@@ -442,9 +508,9 @@
             <span class="tab-spacer"></span>
 
             <!-- https://stackoverflow.com/questions/572768/styling-an-input-type-file-button -->
-            <label for="filepicker" class="filepicker-btn">^</label>
+            <label for="filepicker" class="filepicker-btn other-btn">&#x2191 <small>load</small></label>
             <input type="file", id="filepicker" accept=".json" onchange="loadListsFromFile()" />
-            <button id="downloadbtn" onclick="download()">v</button>
+            <button id="downloadbtn" onclick="download()" class="other-btn">&#x2193 <small>save</small></button>
             <!-- https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser -->
             <a id="downloadAnchorElem" style="display: none"></a>
         </div>
@@ -452,12 +518,13 @@
         <div id="tabs">
 
             <div id="mainPage" class="tab">
+                <h2>Lists to include in quiz:</h2>
 
                 <div id="checkLists">
                     <p>No lists loaded, either make some lists in "Edit", or upload a previously saved set of lists.
                 </div>
                 
-                <button id="runquiz" onclick="runQuiz()">Run</button>
+                <button id="runquiz" onclick="runQuiz()">Quiz me!</button>
             </div>
 
 
@@ -466,7 +533,7 @@
                     <!-- <textarea id="mylist", rows="20"></textarea> -->
                 </div>
                 <!-- <button id="savemylist">Save</button> -->
-                <button id="newlist" onclick="addNewList()">New</button>
+                <button id="newlist" onclick="addNewList()">+</button>
             </div>
             
             <div id="aboutPage" class="tab" style="display: none">
