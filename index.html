@@ -15,9 +15,24 @@
         let quizList = [];
         let quizIndex = 0;
         let timer = 0;
+        let previousTimestamp = undefined;
+        let lastTimerString = "";
+        let currentTimerState = "none";
 
-        let previous_timestamp = undefined;
-        let partial_ticks = 0;
+
+        let resetTime = 4.0;
+        let executeTime = 4.0;
+        
+        let affirmationsList = [
+            "Good job!",
+            "Boom!",
+            "Hyah!",
+            "Nice!",
+            "Slick moves!",
+            "That bad guy is super dead now for sure!",
+            "Don't worry, you'll definitely get the next one!",
+            "Chuck Norris doesn't need affirmations, affirmations need Chuck Norris."
+        ];
 
 
         function addNewList() {
@@ -90,6 +105,11 @@
             createListsEditorElements();
         }
 
+        function endQuiz() {
+            let nameelem = document.getElementById("name");
+            nameelem.innerHTML = "Whew! All done!";
+        }
+
 
         function runQuiz() {
             console.log("Quiz time!");
@@ -108,49 +128,77 @@
         function quizBeginningTime() {
             let nameelem = document.getElementById("name");
             nameelem.innerHTML = "Prepare yourself!"; 
-            countdownTimer(6.0);
+            currentTimerState = "beginning";
+            countdownTimer(1.0);
+        }
+
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+        function quizInBetweenReadinessTime() {
+            let nameelem = document.getElementById("name");
+            let affirmation = affirmationsList[getRandomInt(affirmationsList.length)];
+            nameelem.innerHTML = affirmation + " Get ready for the next one..."; 
+            currentTimerState = "reset";
+            countdownTimer(resetTime);
         }
 
         function advanceQuiz() {
             quizIndex += 1;
             let nameelem = document.getElementById("name");
-            if (quizIndex == quizList.length) {
-                nameelem.innerHTML = "done!";
-                return;
-            }
             
             item = quizList[quizIndex];
             nameelem.innerHTML = item;
-            countdownTimer(4.0);
-            
+            currentTimerState = "execute";
+            countdownTimer(executeTime);
         }
 
         // https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame
         function step(timestamp) {
-            if (previous_timestamp === undefined) {
-                previous_timestamp = timestamp;
+            if (previousTimestamp === undefined) {
+                previousTimestamp = timestamp;
             }
 
-            let elapsed = timestamp - previous_timestamp;
+            let elapsed = timestamp - previousTimestamp;
 
 
             let remaining = timer - elapsed / 1000.0;
             
             timerelem = document.getElementById("timer");
-            timerelem.innerHTML = remaining.toFixed(1);
+            newTimerString = remaining.toFixed(1);
+            if (newTimerString != lastTimerString) {
+                timerelem.innerHTML = newTimerString;
+                lastTimerString = newTimerString;
+            }
 
             if (remaining > 0.0) {
                 requestAnimationFrame(step);
             }
             else {
-                timerelem.innerHTML = "Done!";
+
+                // check for the end of the quiz
+                if (quizIndex + 1 == quizList.length) {
+                    let nameelem = document.getElementById("name");
+                    nameelem.innerHTML = "done!";
+                    timerelem.innerHTML = "";
+                    lastTimerString = "";
+                    endQuiz();
+                    return;
+                }
+
                 console.log("Done!");
-                advanceQuiz();
+                if (currentTimerState === "beginning" || currentTimerState === "reset") {
+                    advanceQuiz();
+                }
+                else {
+                    quizInBetweenReadinessTime();
+                }
             }
         }
 
         function countdownTimer(seconds) {
-            previous_timestamp = undefined;
+            previousTimestamp = undefined;
             timer = seconds;
             
             requestAnimationFrame(step);

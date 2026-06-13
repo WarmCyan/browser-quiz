@@ -10,3 +10,5 @@ TODO: quiz list selector
 
 DONE: list entry with text area
 TODO: keep lists in browser storage
+
+TODO: keep current quiz position saved in browser storage as well
