@@ -1,8 +1,8 @@
-TODO: main tab
-TODO: create list tab
+DONE: main tab
+DONE: create list tab
 DONE: upload lists functionality
 DONE: download lists functionality
-STRT: run quiz
+DONE: run quiz
 TODO: quiz list selector
 
 
@@ -12,3 +12,5 @@ DONE: list entry with text area
 TODO: keep lists in browser storage
 
 TODO: keep current quiz position saved in browser storage as well
+
+TODO: shuffle item list order

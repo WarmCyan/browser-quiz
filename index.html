@@ -122,6 +122,7 @@
             quizList = items;
             quizIndex = -1;
 
+            changeTab("activeQuizPage");
             quizBeginningTime();
         }
 
@@ -234,29 +235,55 @@
 
         window.addEventListener("DOMContentLoaded", (event) => { onPageReady(); });
 
+
+        function changeTab(tabid) {
+            let tablist = document.getElementsByClassName("tab");
+            for (i = 0; i < tablist.length; i++) {
+                tablist[i].style.display = "none";
+            }
+            document.getElementById(tabid).style.display = "block";
+        }
+
         
         </script>
         <style>
         </style>
     </head>
     <body>
-        <input type="file", id="listpicker" accept=".json" onchange="loadListsFromFile()" />
-        <button id="newlist" onclick="addNewList()">New</button>
-        <div id="lists">
-            <!-- <textarea id="mylist", rows="20"></textarea> -->
+
+
+        <div id="tablist">
+
+            <button onclick="changeTab('mainPage')">Main</button>
+            <button onclick="changeTab('editListsPage')">Edit Lists</button>
+            <button onclick="changeTab('aboutPage')">About</button>
+            <input type="file", id="listpicker" accept=".json" onchange="loadListsFromFile()" />
+            <button id="downloadbtn" onclick="download()">Download</button>
+            <!-- https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser -->
+            <a id="downloadAnchorElem" style="display: none"></a>
         </div>
-        <button id="savemylist">Save</button>
-        <button id="downloadbtn" onclick="download()">Download</button>
-        <!-- https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser -->
-        <a id="downloadAnchorElem" style="display: none"></a>
 
 
-        <button id="runquiz" onclick="runQuiz()">Run</button>
+        <div id="activeQuizPage" class="tab" style="display: none">
+            <h1 id="name"></h1>
+            <h2 id="timer"></h2>
+        </div>
+
+        <div id="mainPage" class="tab">
+            <button id="runquiz" onclick="runQuiz()">Run</button>
+        </div>
 
 
-        <div id="timerscreen">
-            <h1 id="name">Thing</h1>
-            <h2 id="timer">Time</h2>
+        <div id="editListsPage" class="tab" style="display: none">
+            <button id="newlist" onclick="addNewList()">New</button>
+            <div id="lists">
+                <!-- <textarea id="mylist", rows="20"></textarea> -->
+            </div>
+            <button id="savemylist">Save</button>
+        </div>
+        
+        <div id="aboutPage" class="tab" style="display: none">
+            hi!
         </div>
         
     </body>
