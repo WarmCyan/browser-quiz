@@ -202,6 +202,7 @@
                 lists[name.value] = txt.value.split("\n");
             }
             console.log(lists);
+            saveBrowserCache();
             updateCheckLists();
         }
 
@@ -224,6 +225,7 @@
             lists = JSON.parse(contents);
             console.log(lists);
             createListsEditorElements();
+            saveBrowserCache();
         }
 
         function endQuiz() {
@@ -389,6 +391,7 @@
 
             
             console.log("Ready!");
+            loadBrowserCache();
         }
 
         window.addEventListener("DOMContentLoaded", (event) => { onPageReady(); });
@@ -417,13 +420,42 @@
 
             document.getElementById("resetTimeLabel").innerHTML = "(" + resetTime.toFixed(1) + ")";
             document.getElementById("executionTimeLabel").innerHTML = "(" + executionTime.toFixed(1) + ")";
+            saveBrowserCache();
         }
 
 
         function loadBrowserCache() {
+            console.log("Checking for browser cache...");
+            savedlists = localStorage.getItem("savedLists");
+            if (savedlists !== null) {
+                console.log("Found!");
+                lists = JSON.parse(savedlists); 
+                createListsEditorElements();
+            }
+
+            let timeUpdate = false;
+            savedExecutionTime = localStorage.getItem("executionTime");
+            if (savedExecutionTime !== null) {
+                document.getElementById("executionTime").value = savedExecutionTime;
+                executionTime = parseFloat(savedExecutionTime);
+                timeUpdate = true;
+            }
+            
+            savedResetTime = localStorage.getItem("resetTime");
+            if (savedResetTime !== null) {
+                document.getElementById("resetTime").value = savedResetTime;
+                resetTime = parseFloat(savedResetTime);
+                timeUpdate = true;
+            }
+
+            if (timeUpdate) { grabTimes(); }
         }
 
         function saveBrowserCache() {
+            console.log("Saving browser cache...");
+            localStorage.setItem("savedLists", JSON.stringify(lists));
+            localStorage.setItem("executionTime", executionTime.toFixed(1));
+            localStorage.setItem("resetTime", resetTime.toFixed(1));
         }
 
         
