@@ -21,7 +21,7 @@
 
 
         let resetTime = 4.0;
-        let executeTime = 4.0;
+        let executionTime = 6.0;
         let randomize = true;
         
         let affirmationsList = [
@@ -268,17 +268,31 @@
             
             if (item[item.length-1] === "*") {
             document.getElementById("timer").style.display = "none";
-                document.getElementById("nextbtn").style.display = "block";
+                document.getElementById("nextbtn").style.display = "inline-block";
             }
             else {
-                countdownTimer(executeTime);
+                countdownTimer(executionTime);
             }
         }
 
         function nextBtnClicked() {
             document.getElementById("nextbtn").style.display = "none";
             document.getElementById("timer").style.display = "block";
+            if (checkQuizCompletion()) { return; }
             quizInBetweenReadinessTime();
+        }
+
+        function checkQuizCompletion() {
+            if (quizIndex + 1 == quizList.length) {
+                let nameelem = document.getElementById("name");
+                nameelem.innerHTML = "done!";
+                timerelem.innerHTML = "";
+                document.getElementById("nextbtn").style.display = "none";
+                lastTimerString = "";
+                endQuiz();
+                return true;
+            }
+            return false;
         }
 
         // https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame
@@ -303,16 +317,7 @@
                 requestAnimationFrame(step);
             }
             else {
-
-                // check for the end of the quiz
-                if (quizIndex + 1 == quizList.length) {
-                    let nameelem = document.getElementById("name");
-                    nameelem.innerHTML = "done!";
-                    timerelem.innerHTML = "";
-                    lastTimerString = "";
-                    endQuiz();
-                    return;
-                }
+                if (checkQuizCompletion()) { return; }
 
                 console.log("Done!");
                 if (currentTimerState === "beginning" || currentTimerState === "reset") {
@@ -339,7 +344,7 @@
             savelistbtn.addEventListener("click", () => {
                 captureListState();
             });*/
-
+            document.getElementById("version").innerHTML = version;
             
 
             
@@ -364,6 +369,21 @@
             }
             document.getElementById(tabid).style.display = "block";
             tablistbtns[targetId].className += " active-tab";
+        }
+
+        function grabTimes() {
+            executionTime = parseFloat(document.getElementById("executionTime").value);
+            resetTime = parseFloat(document.getElementById("resetTime").value);
+
+            document.getElementById("resetTimeLabel").innerHTML = "(" + resetTime.toFixed(1) + ")";
+            document.getElementById("executionTimeLabel").innerHTML = "(" + executionTime.toFixed(1) + ")";
+        }
+
+
+        function loadBrowserCache() {
+        }
+
+        function saveBrowserCache() {
         }
 
         
@@ -514,6 +534,13 @@
                 padding: 30px;
             }
 
+            .slider-row {
+                display: flex;
+            }
+            .slider-row label {
+                margin-top: 16px;
+            }
+
         </style>
     </head>
     <body>
@@ -543,6 +570,18 @@
                 <div id="checkLists">
                     <p>No lists loaded, either make some lists in "Edit", or upload a previously saved set of lists.
                 </div>
+
+                <div class="slider-row">
+                    <input type="range" id="executionTime" value="6.0" min="1.0" max="20.0" step="1.0" oninput="grabTimes()" />
+                    <label for="executionTime">Execution time</label>
+                    <p id="executionTimeLabel">(6.0)</p>
+                </div>
+                <div class="slider-row">
+                    <input type="range" id="resetTime" value="4.0" min="1.0" max="20.0" step="1.0" oninput="grabTimes()" />
+                    <label for="resetTime">Reset time</label>
+                    <p id="resetTimeLabel">(4.0)</p>
+                </div>
+
                 
                 <button id="runquiz" onclick="runQuiz()">Quiz me!</button>
             </div>
@@ -558,7 +597,7 @@
             </div>
             
             <div id="aboutPage" class="tab" style="display: none">
-                hi!
+                <p id="version">version.version.version</p>
             </div>
             
             <div id="activeQuizPage" class="tab" style="display: none">

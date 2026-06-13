@@ -15,7 +15,7 @@ TODO: keep current quiz position saved in browser storage as well
 
 DONE: shuffle item list order
 
-TODO: time edit boxes
+DONE: time edit boxes
 
 DONE: nice CSS!
 
@@ -24,3 +24,7 @@ DONE: when * included in line, don't have execution timer, display button for us
 (alternatively just ahavbe 
 
 TODO: about content
+
+TODO: render on github pages
+
+TODO: remove list
